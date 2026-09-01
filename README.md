@@ -18,15 +18,13 @@ BigQuery (SQL) → Python / Pandas → Power BI → GitHub
 
 ---
 
-## Methodology
+## Method
 
-Three decisions shaped the analysis:
+- **Right-censoring control** — cohorts registering within 7 days of the dataset's end are excluded (10,855 players), since they never had a full observation window.
+- **Shared cohort** — numerator and denominator both join against the same filtered cohort table, preventing a mismatch.
+- **Leakage-free feature** — return days count D1–D6 only, excluding D7 (the label) and D0 (where nearly everyone is active).
 
-**Right-censoring control.** Players registering within 7 days of the dataset's final activity date have no full observation window; including them would depress D7 retention artificially. All such cohorts are excluded (10,855 players).
-
-**Shared cohort for numerator and denominator.** Activity records are joined against the *same* filtered cohort table rather than the full registration table, preventing a numerator/denominator mismatch.
-
-**Leakage-free engagement feature.** The label is "active on D7", so the feature counts return days across **D1–D6 only** — excluding D7 (which would embed the label in the feature) and D0 (where nearly every player is active by definition).
+Python and SQL implementations were cross-validated and produce identical results.
 
 ---
 
@@ -101,5 +99,3 @@ gamelytics-player-retention-analysis/
     ├── retention.pbix
     └── dashboard.png
 ```
-
-Python and SQL implementations were cross-validated and produce identical results.
