@@ -52,7 +52,7 @@ HAVING COUNT(*) >= 100          -- bỏ nhóm quá ít user (nhiễu)
 ORDER BY return_days_d1_d6;
 
 
--- 4.3 Tính Avg Active Days và churn rate
+-- 3 Tính Avg Active Days và churn rate
 -- ---------------------------------------------------------------------
 SELECT
     ROUND(AVG(active_days_d0_d6), 2) AS avg_active_days,
