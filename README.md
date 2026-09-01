@@ -2,8 +2,6 @@
 
 Identifying early player drop-off patterns during the first 7 days after registration.
 
-![Power BI Dashboard](dashboard/dashboard.png)
-
 **Core question:** *What early engagement patterns are associated with Day-7 player retention?*
 
 ---
@@ -15,6 +13,8 @@ Identifying early player drop-off patterns during the first 7 days after registr
 **Analysis scope:** registration cohorts from 2020-01-01 to 2020-09-16 — **344,108 players**.
 
 BigQuery (SQL) → Python / Pandas → Power BI → GitHub
+
+![Power BI Dashboard](dashboard/dashboard.png)
 
 ---
 
