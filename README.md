@@ -1,21 +1,43 @@
 # Mobile Game — Player Retention & Early Engagement Analysis
 
-Identifying early player drop-off patterns during the first 7 days after registration.
-
-**Core question:** *What early engagement patterns are associated with Day-7 player retention?*
+Identifying early return behaviour associated with Day-7 retention.
 
 ---
 
-## Dataset & stack
+**Dataset:** Gamelytics: Mobile Analytics Challenge ([Kaggle](https://www.kaggle.com/datasets/debs2x/gamelytics-mobile-analytics-challenge)) — 1,000,000 registration records and 9,601,013 authentication records (`uid` + Unix timestamps only).
 
-**Gamelytics: Mobile Analytics Challenge** ([Kaggle](https://www.kaggle.com/datasets/debs2x/gamelytics-mobile-analytics-challenge)) — 1,000,000 registration records and 9,601,013 authentication records (`uid` + Unix timestamps only).
+**Scope:** registration cohorts from 2020-01-01 to 2020-09-16 — **344,108 players**.
 
-**Analysis scope:** registration cohorts from 2020-01-01 to 2020-09-16 — **344,108 players**.
-
-BigQuery (SQL) → Python / Pandas → Power BI → GitHub
+**Stack:** BigQuery (SQL) → Python / Pandas → Power BI → GitHub
 
 ![Power BI Dashboard](dashboard/dashboard.png)
 
+
+---
+
+## Data model
+
+```
+reg_data                      auth_data
+├── uid                       ├── uid
+└── reg_ts (Unix)             └── auth_ts (Unix)
+     │                             ▲
+     └──────── uid ────────────────┘
+
+Grain — reg_data: one row per player registration (1,000,000 rows, 1,000,000 unique uid)
+        auth_data: one row per authentication event (9,601,013 rows, 1,000,000 unique uid)
+```
+
+## Metric definitions
+
+```
+| Metric | Definition |
+|---|---|
+| D1 / D3 / D7 retention | % of the registration cohort with authentication activity **exactly** on day 1 / 3 / 7 after registration |
+| Return days (D1–D6) | Number of distinct days with authentication activity between D1 and D6 |
+| No-return rate (D1–D6) | % of players with zero authentication activity between D1 and D6 |
+| Avg active days (D0–D6) | Mean number of distinct active days during the first week, registration day included |
+```
 ---
 
 ## Method
@@ -30,15 +52,13 @@ Python and SQL implementations were cross-validated and produce identical result
 
 ## Key findings
 
-| Metric | Value |
-|---|---|
-| D1 / D3 / D7 retention | 2.02% / 4.63% / 5.80% |
-| Average active days (D0–D6) | 1.29 |
-| Players who never returned during D1–D6 | **77.99%** (268,385) |
+| D1 | D3 | D7 | Avg active days (D0–D6) | No-return rate (D1–D6) |
+|---|---|---|---|---|
+| 2.02% | 4.63% | 5.80% | 1.29 | **77.99%** |
 
-**1 — Most players never return.** Nearly four in five players show no activity between D1 and D6. This dominates every other retention effect in the dataset.
+**1 — Most players show no activity after registration day.** 268,385 of 344,108 players (78.0%) have no authentication record between D1 and D6. This dominates every other retention effect in the dataset.
 
-**2 — A single return visit separates retained from lost players.**
+**2 — A first return is the strongest early signal associated with D7 retention.**
 
 | Return days (D1–D6) | Players | D7 retention |
 |---|---|---|
@@ -47,11 +67,11 @@ Python and SQL implementations were cross-validated and produce identical result
 | 2 | 19,120 | 13.73% |
 | 3 | 2,293 | 10.16% |
 
-Returning at least once is associated with ~7.5× higher D7 retention. The relationship peaks at one return day and declines thereafter — the meaningful threshold is *returning at all*, not *returning often*.
+Returning at least once is associated with ~7.5× higher D7 retention. Retention then *declines* from one return day onward — this non-monotonic shape is treated as the same dataset artifact described below, not as evidence that lower engagement improves retention.
 
 **3 — Retention held flat as acquisition grew.** Monthly registrations rose 41.9% (33,733 → 47,882) while D7 retention stayed within 5.58%–5.99% across all nine cohorts.
 
-**Data quality finding — the retention curve is not organically shaped.** The curve rises from D1 (2.02%) to D6 (6.92%) before dipping at D7, rather than decaying monotonically. This is not a calculation error: Pandas and SQL implementations match, restricting to 2020 doesn't change it, registration volume is evenly distributed with no anomalous clusters, and weekly cohorts show the same pattern (1.2pp range across 38 weeks). The synthetic timestamps appear not to model organic churn, so this shape is treated as a structural property of the dataset — no product interpretation is drawn from it.
+**Data quality note.** The curve rises from D1 (2.02%) to D6 (6.92%) before dipping at D7, rather than decaying monotonically. This is not a calculation error: Pandas and SQL implementations match, restricting to 2020 doesn't change it, registration volume is evenly distributed with no anomalous clusters, and weekly cohorts show the same pattern (1.2pp range across 38 weeks). The synthetic timestamps appear not to model organic churn, so this shape is treated as a structural property of the dataset — no product interpretation is drawn from it.
 
 ---
 
