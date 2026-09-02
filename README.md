@@ -65,6 +65,14 @@ Returning at least once is associated with ~7.5× higher D7 retention. The relat
 
 ---
 
+## Next steps
+
+- Re-run the pipeline on production data to establish whether the patterns hold outside a synthetic dataset.
+- Extend the feature set with session duration and level progression once event telemetry is available, moving from association toward causal diagnosis.
+- Automate the cohort tables and surface "no-return rate" as a monitored metric rather than a one-off report.
+
+---
+
 ## Limitations
 
 - Authentication records are a **proxy for activity** — a login is not necessarily a gameplay session.
