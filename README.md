@@ -30,14 +30,13 @@ Grain — reg_data: one row per player registration (1,000,000 rows, 1,000,000 u
 
 ## Metric definitions
 
-```
 | Metric | Definition |
 |---|---|
-| D1 / D3 / D7 retention | % of the registration cohort with authentication activity **exactly** on day 1 / 3 / 7 after registration |
+| D1 / D3 / D7 retention | % of the registration cohort with authentication activity exactly on day 1 / 3 / 7 after registration |
 | Return days (D1–D6) | Number of distinct days with authentication activity between D1 and D6 |
 | No-return rate (D1–D6) | % of players with zero authentication activity between D1 and D6 |
 | Avg active days (D0–D6) | Mean number of distinct active days during the first week, registration day included |
-```
+
 ---
 
 ## Method
